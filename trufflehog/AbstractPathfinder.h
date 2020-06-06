@@ -9,6 +9,7 @@ Author: Isha Dijcks <i.e.dijcks@student.tudelft.nl>
 #include "ReservationTable.h"
 #include "EdgePenalties.h"
 #include "Crossings.h"
+#include "Map.h"
 
 namespace TruffleHog {
     class AbstractPathfinder {

@@ -22,7 +22,6 @@ Author: Edward Lam <ed@ed-lam.com>
 
 #include "Includes.h"
 #include "Coordinates.h"
-#include "Map.h"
 #include "LabelPool.h"
 #include "ReservationTable.h"
 #include "PriorityQueue.h"

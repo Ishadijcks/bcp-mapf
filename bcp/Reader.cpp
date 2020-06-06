@@ -21,6 +21,7 @@ Author: Edward Lam <ed@ed-lam.com>
 #include "Includes.h"
 #include "ProblemData.h"
 #include <regex>
+#include <trufflehog/BellmanFord.h>
 
 #include "trufflehog/Instance.h"
 #include "trufflehog/AStar.h"
@@ -56,6 +57,7 @@ SCIP_RETCODE read_instance(
 
     // Create pricing solver.
     SharedPtr<AbstractPathfinder> astar = std::make_shared<AStar>(instance->map);
+    SharedPtr<AbstractPathfinder> bellmanFord = std::make_shared<BellmanFord>(instance->map);
 
     // Create the problem.
     SCIP_CALL(SCIPprobdataCreate(scip, instance_name.c_str(), instance, astar));
