@@ -137,7 +137,7 @@ set(MAPF_SOURCE_FILES
         bcp/Constraint_LengthBranching.cpp
         bcp/Output.h
         bcp/Output.cpp
-)
+        trufflehog/BellmanFord.cpp trufflehog/BellmanFord.h)
 include_directories(bcp/)
 
 # Add executable.
