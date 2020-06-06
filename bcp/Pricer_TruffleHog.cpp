@@ -36,7 +36,6 @@ Author: Edward Lam <ed@ed-lam.com>
 //#include <numeric>
 
 #include "trufflehog/Instance.h"
-#include "trufflehog/AStar.h"
 
 // Pricer properties
 #define PRICER_NAME               "trufflehog"
@@ -312,84 +311,6 @@ SCIP_RETCODE run_trufflehog_pricer(
 #ifdef PRINT_DEBUG
     print_used_paths(scip);
 #endif
-
-    // Use debug solution.
-//    {
-//        Vector<Vector<Pair<Position,Position>>> init_paths{
-//            {     {13,8},    {12,8},    {11,8},    {10,8},     {9,8},     {8,8},     {7,8},     {6,8},     {6,9},    {6,10},    {6,11}, },
-//            {     {3,17},    {4,17},    {5,17},    {6,17},    {7,17},    {8,17},    {9,17},    {9,18},   {10,18},   {11,18},   {12,18},   {13,18},   {14,18},   {15,18},   {15,19},   {16,19},   {17,19},   {18,19}, },
-//            {     {6,12},    {5,12},    {4,12},    {3,12},    {3,13},    {2,13},    {2,14},    {2,15}, },
-//            {     {5,16},    {5,15},    {5,14},    {5,13},    {4,13},    {4,12},    {3,12},    {3,11},    {3,10},     {3,9},     {3,8}, },
-//            {     {16,1},    {15,1},    {15,2},    {15,3},    {15,4},    {14,4},    {14,5},    {14,6},    {13,6},    {13,7},    {13,8},    {13,9},    {12,9},    {11,9},    {10,9},     {9,9},     {8,9}, },
-//            {    {17,13},   {16,13},   {16,14},   {16,15},   {16,16},   {15,16}, },
-//            {     {9,19},    {9,18},    {9,17},    {9,16},    {9,15},    {9,14},    {9,13},    {9,12},    {9,11},    {8,11},    {8,10},    {7,10},     {7,9},     {7,8},     {6,8},     {5,8},     {5,7},     {5,6},     {5,5},     {5,4},     {5,3},     {5,2},     {4,2},     {3,2},     {3,1},     {2,1}, },
-//            {     {8,16},    {8,17},    {8,18},    {7,18},    {6,18},    {5,18},    {4,18},    {3,18},    {2,18},    {1,18}, },
-//            {      {7,4},     {7,5},     {7,6},     {7,7},     {7,8},     {7,9},    {7,10},    {7,11},    {7,12},    {7,13},    {8,13},    {9,13}, },
-//            {      {7,4},     {7,4},     {7,5},     {7,6},     {7,7},     {7,8},     {7,9},    {7,10},    {7,11},    {7,12},    {7,13},    {8,13},    {9,13}, },
-//            {    {12,17},   {12,16},   {11,16},   {11,15},   {11,14},   {11,13},   {10,13},    {9,13},    {9,12},    {9,11},    {8,11},    {8,10},     {8,9},     {8,8}, },
-//            {      {2,4},     {2,5},     {3,5},     {4,5},     {5,5},     {6,5},     {7,5},     {7,6},     {7,7},     {8,7}, },
-//            {    {16,15},   {16,16},   {15,16},   {14,16},   {13,16},   {12,16},   {11,16}, },
-//            {    {15,13},   {14,13},   {13,13},   {13,12},   {13,11},   {13,10},    {13,9},    {12,9},    {12,8},    {12,7},    {12,6},    {12,5},    {11,5},    {10,5},    {10,4}, },
-//            {      {6,5},     {6,6},     {7,6},     {8,6},     {9,6},    {10,6},    {10,7},    {11,7},    {11,8},    {11,9},   {11,10},   {12,10},   {13,10},   {13,11},   {14,11},   {14,12}, },
-//            {      {6,5},     {6,6},     {6,7},     {6,8},     {6,9},     {7,9},     {8,9},     {9,9},    {10,9},   {10,10},   {11,10},   {11,11},   {12,11},   {13,11},   {14,11},   {14,12}, },
-//            {     {19,7},    {19,8},    {18,8},    {17,8},    {16,8},    {16,9},    {15,9},    {14,9},    {13,9},    {12,9},    {11,9},    {10,9},     {9,9},     {8,9},     {7,9},    {7,10},    {7,11}, },
-//            {    {20,14},   {20,15},   {20,16},   {20,17},   {19,17},   {19,18},   {18,18},   {18,19},   {17,19},   {16,19},   {15,19},   {14,19}, },
-//            {     {6,18},    {7,18},    {7,17},    {8,17},    {8,16},    {9,16},    {9,15},   {10,15},   {11,15},   {11,14},   {11,13},   {12,13},   {13,13},   {13,12},   {13,11},   {13,10},    {13,9},    {14,9}, },
-//            {     {13,9},    {12,9},    {11,9},    {10,9},     {9,9},     {8,9},    {8,10},    {8,11},    {7,11},    {7,12},    {6,12},    {5,12},    {5,13},    {5,14},    {5,15}, },
-//            {     {13,9},    {12,9},    {11,9},    {10,9},     {9,9},     {8,9},    {8,10},    {7,10},    {6,10},    {6,11},    {6,12},    {5,12},    {5,13},    {5,14},    {5,15}, },
-//            {     {6,13},    {7,13},    {7,12},    {7,11},    {8,11},    {9,11},   {10,11}, },
-//            {     {12,6},    {11,6},    {10,6},    {10,7},     {9,7},     {9,8},     {8,8},     {7,8},     {7,9},    {7,10},    {7,11},    {7,12},    {7,13},    {6,13},    {6,14},    {5,14}, },
-//        };
-////        Vector<Agent> path_agents{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 9, 10, 11, 12, 13, 13, 14, 15, 16, 17, 17, 18, 19 };
-//        Vector<Agent> path_agents(N);
-//        std::iota(path_agents.begin(), path_agents.end(), 0);
-//
-//        static bool done = false;
-//        if (!done)
-//        {
-//            constexpr Position padding = 1;
-//
-//            for (Int idx = 0; idx < init_paths.size(); ++idx)
-//            {
-//                const auto& init_path = init_paths.at(idx);
-//                const auto a = path_agents.at(idx);
-////                const auto tmp = astar.calculate_cost<true>(init_path);
-//
-//                Vector<Edge> path;
-//                for (Int idx = 0; idx < init_path.size() - 1; ++idx)
-//                {
-//                    const auto [x1, y1] = init_path[idx];
-//                    const auto [x2, y2] = init_path[idx+1];
-//                    const auto i = map.get_id(x1 + padding, y1 + padding);
-//                    const auto j = map.get_id(x2 + padding, y2 + padding);
-//                    const auto d = get_direction(NodeTime{i,idx}, NodeTime{j,idx+1}, map);
-//                    path.push_back(Edge{i,d});
-//                }
-//                {
-//                    Int idx = init_path.size() - 1;
-//                    const auto [x1, y1] = init_path[idx];
-//                    const auto i = map.get_id(x1 + padding, y1 + padding);
-//                    const auto d = Direction::INVALID;
-//                    path.push_back(Edge{i,d});
-//                }
-//                debug_assert(path.front().n == agents[a].start);
-//                debug_assert(path.back().n == agents[a].goal);
-//
-//                // Add column.
-//                SCIP_VAR* var = nullptr;
-//                SCIP_CALL(SCIPprobdataAddPricedVar(scip,
-//                                                   probdata,
-//                                                   a,
-//                                                   path.size(),
-//                                                   path.data(),
-//                                                   &var));
-//                debug_assert(var);
-//            }
-//            done = true;
-//        }
-//        *result = SCIP_SUCCESS;
-//        return SCIP_OKAY;
-//    }
 
     // Find the makespan.
     Time makespan = 0;
@@ -707,48 +628,6 @@ SCIP_RETCODE run_trufflehog_pricer(
 
         // Modify edge costs for wait branching decisions.
         Time earliest_finish = 0;
-//        for (Int c = 0; c < n_wait_branching_conss; ++c)
-//        {
-//            // Get the constraint.
-//            auto cons = wait_branching_conss[c];
-//            debug_assert(cons);
-//
-//            // Ignore constraints that are not active since these are not on the current
-//            // active path of the search tree or constraints for a different agent.
-//            if (!SCIPconsIsActive(cons) || SCIPgetWaitBranchingAgent(cons) != a)
-//                continue;
-//
-//            // Enforce the decision.
-//            const auto dir = SCIPgetWaitBranchingDirection(cons);
-//            const auto t = SCIPgetWaitBranchingTime(cons);
-//            if (dir == WaitBranchDirection::MustWait)
-//            {
-//                for (Coord x = 0; x < width; ++x)
-//                    for (Coord y = 0; y < height; ++y)
-//                    {
-//                        const auto n = map.get_id(x, y);
-//                        auto& duals = edge_duals.get_edge_duals(n, t);
-//                        duals.north = NAN;
-//                        duals.south = NAN;
-//                        duals.east = NAN;
-//                        duals.west = NAN;
-//                    }
-//
-//                if (t + 1 > earliest_finish)
-//                    earliest_finish = t + 1;
-//            }
-//            else
-//            {
-//                for (Coord x = 0; x < width; ++x)
-//                    for (Coord y = 0; y < height; ++y)
-//                    {
-//                        const auto n = map.get_id(x, y);
-//                        auto& duals = edge_duals.get_edge_duals(n, t);
-//                        duals.wait = NAN;
-//                    }
-//            }
-//            edge_duals_changed = true;
-//        }
 
         // Sort segments by time.
         std::sort(segments.begin(), segments.end(), [](const auto& a, const auto& b)
@@ -827,54 +706,6 @@ SCIP_RETCODE run_trufflehog_pricer(
             }
         }
         debug_assert(latest_finish >= segments.back().t);
-
-        // Print time constraints.
-//#ifdef PRINT_DEBUG
-//        {
-//            debugln("   Modified edge costs for agent {}", a);
-//            const uint32_t size = gm.height() * gm.width();
-//            for (uint32_t node1 = 0; node1 < size; ++node1)
-//            {
-//                uint32_t x, y;
-//                gm.to_unpadded_xy(node1, x, y);
-//                const auto& constraints = time_cons.get_constraint_set(node1);
-//                for (const auto& constraint : constraints)
-//                {
-//                    const auto t = constraint.timestep_;
-//                    if (constraint.e_[Direction::NORTH] != 1)
-//                    {
-//                        debugln("      (({},{}),({},{})) time {} edge cost {:.4f}",
-//                                x, y, x, y - 1, t,
-//                                constraint.e_[Direction::NORTH]);
-//                    }
-//                    if (constraint.e_[Direction::SOUTH] != 1)
-//                    {
-//                        debugln("      (({},{}),({},{})) time {} edge cost {:.4f}",
-//                                x, y, x, y + 1, t,
-//                                constraint.e_[Direction::SOUTH]);
-//                    }
-//                    if (constraint.e_[Direction::EAST] != 1)
-//                    {
-//                        debugln("      (({},{}),({},{})) time {} edge cost {:.4f}",
-//                                x, y, x + 1, y, t,
-//                                constraint.e_[Direction::EAST]);
-//                    }
-//                    if (constraint.e_[Direction::WEST] != 1)
-//                    {
-//                        debugln("      (({},{}),({},{})) time {} edge cost {:.4f}",
-//                                x, y, x - 1, y, t,
-//                                constraint.e_[Direction::WEST]);
-//                    }
-//                    if (constraint.e_[Direction::WAIT] != 1)
-//                    {
-//                        debugln("      (({},{}),({},{})) time {} edge cost {:.4f}",
-//                                x, y, x, y, t,
-//                                constraint.e_[Direction::WAIT]);
-//                    }
-//                }
-//            }
-//        }
-//#endif
 
         // Start timer.
 #ifdef PRINT_DEBUG

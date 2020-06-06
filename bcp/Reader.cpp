@@ -60,7 +60,7 @@ SCIP_RETCODE read_instance(
     SharedPtr<AbstractPathfinder> bellmanFord = std::make_shared<BellmanFord>(instance->map);
 
     // Create the problem.
-    SCIP_CALL(SCIPprobdataCreate(scip, instance_name.c_str(), instance, astar));
+    SCIP_CALL(SCIPprobdataCreate(scip, instance_name.c_str(), instance, bellmanFord));
 
     // Done.
     return SCIP_OKAY;
