@@ -97,7 +97,7 @@ set(TRUFFLEHOG_SOURCE_FILES
 
 # Set source files.
 set(MAPF_SOURCE_FILES
-        bcp/Main.cpp
+        bcp/Solve.h
         bcp/Includes.h
         bcp/Debug.h
         bcp/Coordinates.h
@@ -141,8 +141,11 @@ set(MAPF_SOURCE_FILES
 include_directories(bcp/)
 
 # Add executable.
-add_executable(bcp-mapf ${MAPF_SOURCE_FILES} ${TRUFFLEHOG_SOURCE_FILES})
+add_executable(bcp-mapf bcp/Main.cpp ${MAPF_SOURCE_FILES} ${TRUFFLEHOG_SOURCE_FILES})
 target_link_libraries(bcp-mapf fmt::fmt-header-only libscip ${LIBM})
+
+add_executable(benchmarks bcp/Benchmarking.cpp ${MAPF_SOURCE_FILES} ${TRUFFLEHOG_SOURCE_FILES})
+target_link_libraries(benchmarks fmt::fmt-header-only libscip ${LIBM})
 
 # Enable the families of cuts.
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_WAITEDGE_CONFLICTS")
