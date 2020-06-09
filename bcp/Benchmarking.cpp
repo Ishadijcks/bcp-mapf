@@ -67,10 +67,10 @@ struct Benchmark {
         arguments.push_back(getInstancePath());
 
         if (maxAgents > -1) {
-            arguments.push_back("--agents-limit=" + std::to_string(maxAgents));
+            arguments.push_back(" --agents-limit=" + std::to_string(maxAgents));
         }
         if (timeLimit > -1) {
-            arguments.push_back("--time-limit=" + std::to_string(timeLimit));
+            arguments.push_back(" --time-limit=" + std::to_string(timeLimit));
         }
 
         for (const auto &arg : arguments)
