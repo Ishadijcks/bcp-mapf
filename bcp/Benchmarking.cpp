@@ -3,6 +3,7 @@ Author: Isha Dijcks <i.e.dijcks@student.tudelft.nl>
 */
 
 #include <utility>
+#include <fstream>
 
 #include "Solve.h"
 
@@ -13,7 +14,7 @@ std::string &replace(std::string &s, const std::string &from, const std::string 
     return s;
 }
 
-std::string outputPath = "build-release/outputs/";
+std::string outputPath = "outputs/";
 std::string instancePath = "../instances/";
 
 struct Benchmark {
@@ -45,8 +46,7 @@ struct Benchmark {
         return outputPath + replace(name, ".scen", ".sol");
     }
 
-    std::vector<char *> getArgs(char* workingDirectory) {
-
+    std::vector<char *> getArgs() {
         if(argv.size() != 0) {
             return argv;
         }
@@ -59,8 +59,6 @@ struct Benchmark {
         }
         arguments.push_back(getInstancePath());
 
-        argv.push_back(workingDirectory);
-
         for (const auto& arg : arguments)
             argv.push_back((char*)arg.data());
         argv.push_back(nullptr);
@@ -69,21 +67,45 @@ struct Benchmark {
     }
 };
 
-int main(int argc, char **argv) {
-    Benchmark benchmarks[] = {
-            Benchmark("custom", "small-corridor-5x5-2-agents.scen")
-    };
-    auto args = benchmarks[0].getArgs(argv[0]);
+int getLastResult(Benchmark benchmark) {
+    const std::string &path = benchmark.getOutputPath();
+    std::ifstream infile(path);
 
+    int output = -1;
+    if (infile.good())
+    {
+        std::string sLine;
+        getline(infile, sLine);
+        output = std::stoi(sLine);
+        std::cout << output << std::endl;
+    } else {
+        throw std::runtime_error("Could not retrieve results for benchmark " + path);
+    }
+
+    infile.close();
+    return output;
+}
+
+bool runBenchMark(char **argv, Benchmark benchmark) {
+    auto args = benchmark.getArgs();
+    args.insert(args.begin(), argv[0]);
     const SCIP_RETCODE retcode1 = start_solver(args.size() - 1, args.data());
     if (retcode1 != SCIP_OKAY)
     {
         SCIPprintError(retcode1);
-        return -1;
+        return false;
     }
+
+    getLastResult(benchmark);
+    return true;
+}
+
+int main(int argc, char **argv) {
+    Benchmark benchmarks[] = {
+            Benchmark("custom", "small-corridor-5x5-2-agents.scen")
+    };
+
+    runBenchMark(argv, benchmarks[0]);
     return 0;
 }
 
-int getLastResult(Benchmark benchmark) {
-    return 0;
-}
