@@ -56,7 +56,8 @@ struct Benchmark {
     }
 
     std::string getOutputPath() {
-        return outputPath + replace(name, ".scen", ".sol");
+        std::string agentPart = maxAgents > -1 ? "-" + std::to_string(maxAgents) + "agents" : "";
+        return outputPath + replace(name, ".scen", "") + agentPart + ".sol";
     }
 
     std::vector<char *> getArgs() {
@@ -67,10 +68,10 @@ struct Benchmark {
         arguments.push_back(getInstancePath());
 
         if (maxAgents > -1) {
-            arguments.push_back(" --agents-limit=" + std::to_string(maxAgents));
+            arguments.push_back("--agents-limit=" + std::to_string(maxAgents));
         }
         if (timeLimit > -1) {
-            arguments.push_back(" --time-limit=" + std::to_string(timeLimit));
+            arguments.push_back("--time-limit=" + std::to_string(timeLimit));
         }
 
         for (const auto &arg : arguments)
@@ -94,7 +95,7 @@ int getLastResult(Benchmark benchmark) {
 
         try {
             output = std::stoi(sLine);
-        } catch (const std::invalid_argument& e) {
+        } catch (const std::invalid_argument &e) {
             std::cout << e.what() << std::endl;
             output = -1;
         }
@@ -118,15 +119,17 @@ int runBenchMark(char **argv, Benchmark benchmark) {
     }
 
     int solution = getLastResult(benchmark);
+
     return solution;
 }
 
 // Run the provided benchmarks and report the results
 int main(int argc, char **argv) {
     Benchmark benchmarks[] = {
-            Benchmark("custom", "small-corridor-5x5-2-agents.scen"),
-            Benchmark("movingai_2018/10obs-20x20map", "10obs-20x20map-60agents-49.scen", 1, 10),
-            Benchmark("movingai_2018/10obs-20x20map", "10obs-20x20map-60agents-49.scen", 10, 10),
+//            Benchmark("custom", "small-corridor-5x5-2-agents.scen"),
+            Benchmark("movingai_2018/20x20map", "20x20map-60agents-49.scen", 6),
+            Benchmark("movingai_2018/20x20map", "20x20map-60agents-49.scen", 6, 2),
+            Benchmark("movingai_2018/20x20map", "20x20map-60agents-49.scen", 15),
     };
 
     int benchmarkCount = (sizeof(benchmarks) / sizeof(*benchmarks));
