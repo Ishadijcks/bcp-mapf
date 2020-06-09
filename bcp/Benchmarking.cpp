@@ -126,9 +126,10 @@ int runBenchMark(char **argv, Benchmark benchmark) {
 // Run the provided benchmarks and report the results
 int main(int argc, char **argv) {
     Benchmark benchmarks[] = {
-//            Benchmark("custom", "small-corridor-5x5-2-agents.scen"),
-            Benchmark("movingai_2018/20x20map", "20x20map-60agents-49.scen", 6),
-            Benchmark("movingai_2018/20x20map", "20x20map-60agents-49.scen", 6, 2),
+            Benchmark("custom", "small-corridor-5x5-2-agents.scen"),
+            Benchmark("movingai_2018/20x20map", "20x20map-60agents-49.scen", 5),
+            Benchmark("movingai_2018/20x20map", "20x20map-60agents-49.scen", 5, 2),
+            Benchmark("movingai_2018/20x20map", "20x20map-60agents-49.scen", 10),
             Benchmark("movingai_2018/20x20map", "20x20map-60agents-49.scen", 15),
     };
 
