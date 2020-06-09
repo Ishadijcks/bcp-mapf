@@ -1,5 +1,20 @@
 /*
-Author: Isha Dijcks <i.e.dijcks@student.tudelft.nl>
+This file is part of BCP-MAPF.
+
+BCP-MAPF is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+BCP-MAPF is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BCP-MAPF.  If not, see <https://www.gnu.org/licenses/>.
+
+Author: Edward Lam <ed@ed-lam.com>
 */
 
 #ifndef BCP_MAPF_SOLVE_H
@@ -16,15 +31,13 @@ Author: Isha Dijcks <i.e.dijcks@student.tudelft.nl>
 static
 SCIP_RETCODE start_solver(
         int argc,      // Number of shell parameters
-        char** argv    // Array with shell parameters
-)
-{
+        char **argv    // Array with shell parameters
+) {
     // Parse program options.
     String instance_file;
     SCIP_Real time_limit = 0;
     Agent agents_limit = std::numeric_limits<Agent>::max();
-    try
-    {
+    try {
         // Create program options.
         cxxopts::Options options(argv[0],
                                  "BCP-MAPF - branch-and-cut-and-price solver for "
@@ -34,40 +47,34 @@ SCIP_RETCODE start_solver(
                 ("help", "Print help")
                 ("f,file", "Path to instance file", cxxopts::value<Vector<String>>())
                 ("t,time-limit", "Time limit in seconds", cxxopts::value<SCIP_Real>())
-                ("a,agents-limit", "Read first N agents only", cxxopts::value<int>())
-                ;
+                ("a,agents-limit", "Read first N agents only", cxxopts::value<int>());
         options.parse_positional({"file"});
 
         // Parse options.
         auto result = options.parse(argc, argv);
 
         // Print help.
-        if (result.count("help") || !result.count("file"))
-        {
+        if (result.count("help") || !result.count("file")) {
             println("{}", options.help());
             exit(0);
         }
 
         // Get path to instance.
-        if (result.count("file"))
-        {
+        if (result.count("file")) {
             instance_file = result["file"].as<Vector<String>>().at(0);
         }
 
         // Get time limit.
-        if (result.count("time-limit"))
-        {
+        if (result.count("time-limit")) {
             time_limit = result["time-limit"].as<SCIP_Real>();
         }
 
         // Get agents limit.
-        if (result.count("agents-limit"))
-        {
+        if (result.count("agents-limit")) {
             agents_limit = result["agents-limit"].as<int>();
         }
     }
-    catch (const cxxopts::OptionException& e)
-    {
+    catch (const cxxopts::OptionException &e) {
         err("{}", e.what());
     }
 
@@ -102,7 +109,7 @@ SCIP_RETCODE start_solver(
     println("");
 
     // Initialize SCIP.
-    SCIP* scip = nullptr;
+    SCIP *scip = nullptr;
     SCIP_CALL(SCIPcreate(&scip));
 
     // Set up plugins.
@@ -132,8 +139,7 @@ SCIP_RETCODE start_solver(
         {
             const auto nheurs = SCIPgetNHeurs(scip);
             auto heurs = SCIPgetHeurs(scip);
-            for (Int idx = 0; idx < nheurs; ++idx)
-            {
+            for (Int idx = 0; idx < nheurs; ++idx) {
                 auto heur = heurs[idx];
                 const String name(SCIPheurGetName(heur));
                 if (name == "alns" ||
@@ -169,8 +175,7 @@ SCIP_RETCODE start_solver(
     SCIP_CALL(read_instance(scip, instance_file.c_str(), agents_limit));
 
     // Set time limit.
-    if (time_limit > 0)
-    {
+    if (time_limit > 0) {
         SCIP_CALL(SCIPsetRealParam(scip, "limits/time", time_limit));
     }
 

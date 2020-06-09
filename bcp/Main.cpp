@@ -19,11 +19,9 @@ Author: Edward Lam <ed@ed-lam.com>
 
 #include "Solve.h"
 
-int main(int argc, char** argv)
-{
+int main(int argc, char **argv) {
     const SCIP_RETCODE retcode = start_solver(argc, argv);
-    if (retcode != SCIP_OKAY)
-    {
+    if (retcode != SCIP_OKAY) {
         SCIPprintError(retcode);
         return -1;
     }
