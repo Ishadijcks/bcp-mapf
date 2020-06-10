@@ -93,7 +93,11 @@ set(TRUFFLEHOG_SOURCE_FILES
         trufflehog/AStar.cpp
         trufflehog/ReservationTable.h
         trufflehog/ReservationTable.cpp
-        trufflehog/AbstractPathfinder.cpp trufflehog/AbstractPathfinder.h)
+        trufflehog/AbstractPathfinder.cpp
+        trufflehog/AbstractPathfinder.h
+        trufflehog/BellmanFord.cpp
+        trufflehog/BellmanFord.h
+)
 
 # Set source files.
 set(MAPF_SOURCE_FILES
@@ -137,7 +141,7 @@ set(MAPF_SOURCE_FILES
         bcp/Constraint_LengthBranching.cpp
         bcp/Output.h
         bcp/Output.cpp
-        trufflehog/BellmanFord.cpp trufflehog/BellmanFord.h)
+)
 include_directories(bcp/)
 
 # Add executable.
@@ -146,6 +150,9 @@ target_link_libraries(bcp-mapf fmt::fmt-header-only libscip ${LIBM})
 
 add_executable(benchmarks bcp/Benchmarking.cpp ${MAPF_SOURCE_FILES} ${TRUFFLEHOG_SOURCE_FILES})
 target_link_libraries(benchmarks fmt::fmt-header-only libscip ${LIBM})
+
+add_executable(bellman-ford trufflehog/TestBellmanFord.cpp ${TRUFFLEHOG_SOURCE_FILES})
+target_link_libraries(bellman-ford fmt::fmt-header-only)
 
 # Enable the families of cuts.
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_WAITEDGE_CONFLICTS")
