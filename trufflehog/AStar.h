@@ -95,7 +95,6 @@ class AStar : public AbstractPathfinder
     Heuristic heuristic_;
 
     // Penalties
-    EdgePenalties edge_penalties_;
     Vector<Cost> time_finish_penalties_;
 #ifdef USE_GOAL_CONFLICTS
     Vector<GoalCrossing> goal_crossings_;
@@ -127,7 +126,6 @@ class AStar : public AbstractPathfinder
 
     bool hasReservationTable() override { return true; };
     ReservationTable& reservation_table() override { return open_.cmp().reservation_table_; };
-    EdgePenalties& edge_penalties() override { return edge_penalties_; }
     Vector<Cost>& time_finish_penalties() override { return time_finish_penalties_; }
 #ifdef USE_GOAL_CONFLICTS
     Vector<GoalCrossing>& goal_crossings() override { return goal_crossings_; }

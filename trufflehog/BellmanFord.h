@@ -29,7 +29,6 @@ namespace TruffleHog {
         bool hasReservationTable() override { return false; };
         ReservationTable& reservation_table() override {  };
 
-        EdgePenalties& edge_penalties() override { }
         Vector<Cost>& time_finish_penalties() override { }
 #ifdef USE_GOAL_CONFLICTS
 

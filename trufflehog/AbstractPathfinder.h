@@ -14,13 +14,15 @@ Author: Isha Dijcks <i.e.dijcks@student.tudelft.nl>
 namespace TruffleHog {
     class AbstractPathfinder {
     public:
+        EdgePenalties edge_penalties_;
+
         // Getters
         virtual Time max_path_length() = 0;
 
         virtual bool hasReservationTable() = 0;
         virtual ReservationTable& reservation_table() = 0;
 
-        virtual EdgePenalties& edge_penalties() = 0;
+        EdgePenalties &edge_penalties() { return edge_penalties_; };
         virtual Vector<Cost>& time_finish_penalties() = 0;
 #ifdef USE_GOAL_CONFLICTS
         virtual Vector<GoalCrossing>& goal_crossings() = 0;

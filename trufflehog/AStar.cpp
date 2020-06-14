@@ -76,7 +76,6 @@ AStar::AStar(const Map& map)
     : map_(map),
       label_pool_(),
       heuristic_(map, label_pool_),
-      edge_penalties_(),
       time_finish_penalties_(),
 #ifdef USE_GOAL_CONFLICTS
       goal_crossings_(),
