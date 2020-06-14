@@ -16,7 +16,10 @@ namespace TruffleHog {
     public:
         // Getters
         virtual Time max_path_length() = 0;
+
+        virtual bool hasReservationTable() = 0;
         virtual ReservationTable& reservation_table() = 0;
+
         virtual EdgePenalties& edge_penalties() = 0;
         virtual Vector<Cost>& time_finish_penalties() = 0;
 #ifdef USE_GOAL_CONFLICTS

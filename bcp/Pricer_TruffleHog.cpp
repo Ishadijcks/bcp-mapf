@@ -444,20 +444,47 @@ SCIP_RETCODE run_trufflehog_pricer(
 
         // Set up reservation table. Reserve vertices in use by all other agents and
         // reserve vertices in all new paths.
-        restab.clear_reservations();
-        for (auto var : vars)
-        {
-            // Make reservations.
-            debug_assert(var);
-            const auto var_val = SCIPgetSolVal(scip, nullptr, var);
-            if (SCIPisPositive(scip, var_val))
-            {
-                // Reserve if different agent.
-                auto vardata = SCIPvarGetData(var);
-                const auto path_a = SCIPvardataGetAgent(vardata);
-                if (path_a != a)
-                {
+        if(pathfinder.hasReservationTable()) {
+            restab.clear_reservations();
+            for (auto var : vars) {
+                // Make reservations.
+                debug_assert(var);
+                const auto var_val = SCIPgetSolVal(scip, nullptr, var);
+                if (SCIPisPositive(scip, var_val)) {
+                    // Reserve if different agent.
+                    auto vardata = SCIPvarGetData(var);
+                    const auto path_a = SCIPvardataGetAgent(vardata);
+                    if (path_a != a) {
+                        // Get the path.
+                        const auto path_length = SCIPvardataGetPathLength(vardata);
+                        const auto path = SCIPvardataGetPath(vardata);
+
+                        // Update reservation table.
+                        Time t = 0;
+                        {
+                            const auto n = path[t].n;
+                            restab.reserve(NodeTime{n, t});
+                            restab.reserve(NodeTime{n, t + 1});
+                        }
+                        for (t = 1; t < path_length; ++t) {
+                            const auto n = path[t].n;
+                            restab.reserve(NodeTime{n, t - 1});
+                            restab.reserve(NodeTime{n, t});
+                            restab.reserve(NodeTime{n, t + 1});
+                        }
+                        const auto n = path[path_length - 1].n;
+                        for (++t; t < makespan; ++t) {
+                            restab.reserve(NodeTime{n, t});
+                        }
+                    }
+                }
+            }
+            for (Int idx = 0; idx < order_idx; ++idx) {
+                auto var = order[idx].new_var;
+                if (var) {
                     // Get the path.
+                    auto vardata = SCIPvarGetData(var);
+                    debug_assert(SCIPvardataGetAgent(vardata) != a);
                     const auto path_length = SCIPvardataGetPathLength(vardata);
                     const auto path = SCIPvardataGetPath(vardata);
 
@@ -468,54 +495,20 @@ SCIP_RETCODE run_trufflehog_pricer(
                         restab.reserve(NodeTime{n, t});
                         restab.reserve(NodeTime{n, t + 1});
                     }
-                    for (t = 1; t < path_length; ++t)
-                    {
+                    for (t = 1; t < path_length; ++t) {
                         const auto n = path[t].n;
                         restab.reserve(NodeTime{n, t - 1});
                         restab.reserve(NodeTime{n, t});
                         restab.reserve(NodeTime{n, t + 1});
                     }
                     const auto n = path[path_length - 1].n;
-                    for (++t; t < makespan; ++t)
-                    {
+                    for (++t; t < makespan; ++t) {
                         restab.reserve(NodeTime{n, t});
                     }
                 }
             }
-        }
-        for (Int idx = 0; idx < order_idx; ++idx)
-        {
-            auto var = order[idx].new_var;
-            if (var)
-            {
-                // Get the path.
-                auto vardata = SCIPvarGetData(var);
-                debug_assert(SCIPvardataGetAgent(vardata) != a);
-                const auto path_length = SCIPvardataGetPathLength(vardata);
-                const auto path = SCIPvardataGetPath(vardata);
 
-                // Update reservation table.
-                Time t = 0;
-                {
-                    const auto n = path[t].n;
-                    restab.reserve(NodeTime{n, t});
-                    restab.reserve(NodeTime{n, t + 1});
-                }
-                for (t = 1; t < path_length; ++t)
-                {
-                    const auto n = path[t].n;
-                    restab.reserve(NodeTime{n, t - 1});
-                    restab.reserve(NodeTime{n, t});
-                    restab.reserve(NodeTime{n, t + 1});
-                }
-                const auto n = path[path_length - 1].n;
-                for (++t; t < makespan; ++t)
-                {
-                    restab.reserve(NodeTime{n, t});
-                }
-            }
         }
-
         // Modify edge costs for two-agent robust cuts.
         edge_penalties = global_edge_penalties;
         for (const auto& cut : two_agent_robust_cuts)

@@ -124,6 +124,8 @@ class AStar : public AbstractPathfinder
 
     // Getters
     Time max_path_length() override { return heuristic_.max_path_length(); }
+
+    bool hasReservationTable() override { return true; };
     ReservationTable& reservation_table() override { return open_.cmp().reservation_table_; };
     EdgePenalties& edge_penalties() override { return edge_penalties_; }
     Vector<Cost>& time_finish_penalties() override { return time_finish_penalties_; }
