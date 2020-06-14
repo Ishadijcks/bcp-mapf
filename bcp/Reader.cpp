@@ -30,7 +30,8 @@ Author: Edward Lam <ed@ed-lam.com>
 SCIP_RETCODE read_instance(
     SCIP* scip,                   // SCIP
     const char* scenario_path,    // File path to scenario
-    const Agent nb_agents         // Number of agents to read
+    const Agent nb_agents,        // Number of agents to read
+    const PathfinderAlgorithm pathfinderAlgorithm
 )
 {
     // Get instance name.
@@ -56,11 +57,19 @@ SCIP_RETCODE read_instance(
     auto instance = std::make_shared<Instance>(scenario_path, nb_agents);
 
     // Create pricing solver.
-    SharedPtr<AbstractPathfinder> astar = std::make_shared<AStar>(instance->map);
-    SharedPtr<AbstractPathfinder> bellmanFord = std::make_shared<BellmanFord>(instance->map);
+    SharedPtr<AbstractPathfinder> pathfinder;
+
+    switch (pathfinderAlgorithm) {
+        case PathfinderAlgorithm::AStar:
+            pathfinder = std::make_shared<AStar>(instance->map);
+            break;
+        case PathfinderAlgorithm::BellmanFord:
+            pathfinder = std::make_shared<BellmanFord>(instance->map);
+            break;
+    }
 
     // Create the problem.
-    SCIP_CALL(SCIPprobdataCreate(scip, instance_name.c_str(), instance, astar));
+    SCIP_CALL(SCIPprobdataCreate(scip, instance_name.c_str(), instance, pathfinder));
 
     // Done.
     return SCIP_OKAY;

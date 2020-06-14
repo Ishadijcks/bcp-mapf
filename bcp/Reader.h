@@ -20,6 +20,7 @@ Author: Edward Lam <ed@ed-lam.com>
 #ifndef MAPF_READER_H
 #define MAPF_READER_H
 
+#include <trufflehog/AbstractPathfinder.h>
 #include "Includes.h"
 #include "scip/scip.h"
 
@@ -27,7 +28,8 @@ Author: Edward Lam <ed@ed-lam.com>
 SCIP_RETCODE read_instance(
     SCIP* scip,                                                  // SCIP
     const char* scenario_path,                                   // File path to scenario
-    const Agent nb_agents = std::numeric_limits<Agent>::max()    // Number of agents to read
+    const Agent nb_agents = std::numeric_limits<Agent>::max(),   // Number of agents to read
+    PathfinderAlgorithm pathfinderAlgorithm = PathfinderAlgorithm::AStar
 );
 
 #endif

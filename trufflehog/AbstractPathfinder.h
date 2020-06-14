@@ -11,6 +11,8 @@ Author: Isha Dijcks <i.e.dijcks@student.tudelft.nl>
 #include "Crossings.h"
 #include "Map.h"
 
+enum class PathfinderAlgorithm {AStar, BellmanFord};
+
 namespace TruffleHog {
     class AbstractPathfinder {
     public:

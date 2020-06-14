@@ -35,6 +35,7 @@ SCIP_RETCODE start_solver(
 ) {
     // Parse program options.
     String instance_file;
+    PathfinderAlgorithm pathfinderAlgorithm;
     SCIP_Real time_limit = 0;
     Agent agents_limit = std::numeric_limits<Agent>::max();
     try {
@@ -47,6 +48,7 @@ SCIP_RETCODE start_solver(
                 ("help", "Print help")
                 ("f,file", "Path to instance file", cxxopts::value<Vector<String>>())
                 ("t,time-limit", "Time limit in seconds", cxxopts::value<SCIP_Real>())
+                ("p,pathfinder", "Pathfinder algorithm to use (AStar, BellmanFord)", cxxopts::value<Vector<String>>())
                 ("a,agents-limit", "Read first N agents only", cxxopts::value<int>());
         options.parse_positional({"file"});
 
@@ -62,6 +64,24 @@ SCIP_RETCODE start_solver(
         // Get path to instance.
         if (result.count("file")) {
             instance_file = result["file"].as<Vector<String>>().at(0);
+        }
+
+        // Get pathfinder algorithm to use
+        if (result.count("pathfinder")) {
+            std::string pathfinderString = result["pathfinder"].as<Vector<String>>().at(0);
+            println("{}", pathfinderString);
+            if (pathfinderString == "AStar") {
+                pathfinderAlgorithm = PathfinderAlgorithm::AStar;
+            } else if (pathfinderString == "BellmanFord") {
+                pathfinderAlgorithm = PathfinderAlgorithm::BellmanFord;
+            } else {
+                println("Invalid pathfinder: {}", pathfinderString);
+                println("{}", options.help());
+                exit(0);
+            }
+        } else {
+            println("No pathfinder algorithm specified, using AStar");
+            pathfinderAlgorithm = PathfinderAlgorithm::AStar;
         }
 
         // Get time limit.
@@ -172,7 +192,7 @@ SCIP_RETCODE start_solver(
 
     // Read instance.
     release_assert(agents_limit > 0, "Cannot limit to {} number of agents", agents_limit);
-    SCIP_CALL(read_instance(scip, instance_file.c_str(), agents_limit));
+    SCIP_CALL(read_instance(scip, instance_file.c_str(), agents_limit, pathfinderAlgorithm));
 
     // Set time limit.
     if (time_limit > 0) {
