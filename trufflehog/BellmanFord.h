@@ -32,8 +32,6 @@ namespace TruffleHog {
         bool hasReservationTable() override { return false; };
         ReservationTable& reservation_table() override {  };
 
-        Vector<Cost>& time_finish_penalties() override { }
-
         // Solve
         void compute_h(const Node goal) override { }
 

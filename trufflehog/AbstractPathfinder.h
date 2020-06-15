@@ -25,9 +25,9 @@ namespace TruffleHog {
         virtual ReservationTable& reservation_table() = 0;
 
         EdgePenalties &edge_penalties() { return edge_penalties_; };
-        virtual Vector<Cost>& time_finish_penalties() = 0;
+        Vector<Cost>& time_finish_penalties() { return time_finish_penalties_; }
+
 #ifdef USE_GOAL_CONFLICTS
-        Vector<GoalCrossing> goal_crossings_;
         Vector<GoalCrossing>& goal_crossings() { return goal_crossings_; }
 #endif
 
@@ -49,6 +49,12 @@ namespace TruffleHog {
 #endif
 
     protected:
+        // Penalties
+        Vector<Cost> time_finish_penalties_;
+#ifdef USE_GOAL_CONFLICTS
+        Vector<GoalCrossing> goal_crossings_;
+#endif
+
         bool verbose = false;
     };
 }

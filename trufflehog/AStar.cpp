@@ -76,7 +76,6 @@ AStar::AStar(const Map& map)
     : map_(map),
       label_pool_(),
       heuristic_(map, label_pool_),
-      time_finish_penalties_(),
       open_(map.size()),
       frontier_without_resources_(),
       h_(nullptr),
