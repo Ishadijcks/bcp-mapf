@@ -27,7 +27,8 @@ namespace TruffleHog {
         EdgePenalties &edge_penalties() { return edge_penalties_; };
         virtual Vector<Cost>& time_finish_penalties() = 0;
 #ifdef USE_GOAL_CONFLICTS
-        virtual Vector<GoalCrossing>& goal_crossings() = 0;
+        Vector<GoalCrossing> goal_crossings_;
+        Vector<GoalCrossing>& goal_crossings() { return goal_crossings_; }
 #endif
 
         // Solve

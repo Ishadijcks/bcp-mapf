@@ -33,11 +33,8 @@ namespace TruffleHog {
         ReservationTable& reservation_table() override {  };
 
         Vector<Cost>& time_finish_penalties() override { }
-#ifdef USE_GOAL_CONFLICTS
 
-        Vector<GoalCrossing>& goal_crossings() override {};
-#endif
-//         Solve
+        // Solve
         void compute_h(const Node goal) override { }
 
         Pair<Vector<NodeTime>, Cost> solve(NodeTime start,
