@@ -6,6 +6,9 @@ Author: Isha Dijcks <i.e.dijcks@student.tudelft.nl>
 #define BCP_MAPF_BELLMANFORD_H
 
 #include "AbstractPathfinder.h"
+#include <iostream>
+#include <list>
+#include <limits>
 
 namespace TruffleHog {
     class BellmanFord : public AbstractPathfinder {
@@ -43,6 +46,10 @@ namespace TruffleHog {
                                            Time goal_latest = std::numeric_limits<Time>::max(),
                                            Cost max_cost = std::numeric_limits<Cost>::infinity());
 
+
+
+    private:
+        void updateDistances(int d, int MAX_VALUE, Vector<Int>* distances1, Node w, std::list<Node>* queue_new);
     };
 
 }
