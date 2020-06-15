@@ -7,6 +7,14 @@ Author: Isha Dijcks <i.e.dijcks@student.tudelft.nl>
 namespace TruffleHog {
     BellmanFord::BellmanFord(const Map &map)
             : map_(map) {
+        map.printPassable();
+        map.printNodes();
+
+        int mapSize = map.size();
+        std::list<Node> vertexCover = {};
+        Vector<bool> uncovered(mapSize);
+        Vector<Int> degree(mapSize);
+
     }
 
     Pair<Vector<NodeTime>, Cost>

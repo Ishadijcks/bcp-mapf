@@ -131,6 +131,38 @@ class Map
         fmt::print("\n");
         fflush(stdout);
     }
+
+    // Debug
+    void printPassable() const
+    {
+        for (int n = 0; n < passable_.size(); ++n)
+        {
+            if (n % width() == 0)
+                fmt::print("\n");
+            fmt::print("{}", passable_[n] ? '.' : '@');
+        }
+        fmt::print("\n");
+        fflush(stdout);
+    }
+
+    // Debug
+    void printNodes() const
+    {
+        for (int n = 0; n < passable_.size(); ++n)
+        {
+            if (n % width() == 0)
+                fmt::print("\n");
+            fmt::print("{:04d} ", n);
+        }
+        fmt::print("\n");
+        fflush(stdout);
+    }
+
+    bool is_passable(const Node n)
+    {
+        return passable_[n];
+    }
+
 };
 
 }
