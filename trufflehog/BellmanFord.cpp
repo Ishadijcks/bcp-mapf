@@ -10,11 +10,7 @@ namespace TruffleHog {
         map.printPassable();
         map.printNodes();
 
-        int mapSize = map.size();
-        std::list<Node> vertexCover = {};
-        Vector<bool> uncovered(mapSize);
-        Vector<Int> degree(mapSize);
-
+        this->reset();
     }
 
     Pair<Vector<NodeTime>, Cost>
@@ -39,5 +35,13 @@ namespace TruffleHog {
         }
 
     }
+
+    void BellmanFord::reset() {
+        mapSize = map_.size();
+        vertexCover = {};
+        uncovered = Vector<bool>(mapSize);
+        degree = Vector<Int>(mapSize);
+    }
+
 
 }

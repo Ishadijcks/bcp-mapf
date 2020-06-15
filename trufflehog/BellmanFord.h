@@ -13,16 +13,22 @@ Author: Isha Dijcks <i.e.dijcks@student.tudelft.nl>
 namespace TruffleHog {
     class BellmanFord : public AbstractPathfinder {
 
-    // Instance
-    const Map& map_;
+        // Instance
+        const Map &map_;
 
     public:
         BellmanFord() = delete;
-        BellmanFord(const Map& map);
-        BellmanFord(const BellmanFord&) = delete;
-        BellmanFord(BellmanFord&&) = delete;
-        BellmanFord& operator=(const BellmanFord&) = delete;
-        BellmanFord& operator=(BellmanFord&&) = delete;
+
+        BellmanFord(const Map &map);
+
+        BellmanFord(const BellmanFord &) = delete;
+
+        BellmanFord(BellmanFord &&) = delete;
+
+        BellmanFord &operator=(const BellmanFord &) = delete;
+
+        BellmanFord &operator=(BellmanFord &&) = delete;
+
         ~BellmanFord() = default;
 
         // Getters
@@ -30,10 +36,11 @@ namespace TruffleHog {
         Time max_path_length() override { return 3; }
 
         bool hasReservationTable() override { return false; };
-        ReservationTable& reservation_table() override {  };
+
+        ReservationTable &reservation_table() override {};
 
         // Solve
-        void compute_h(const Node goal) override { }
+        void compute_h(const Node goal) override {}
 
         Pair<Vector<NodeTime>, Cost> solve(NodeTime start,
                                            Node goal,
@@ -42,9 +49,15 @@ namespace TruffleHog {
                                            Cost max_cost = std::numeric_limits<Cost>::infinity());
 
 
-
     private:
-        void updateDistances(int d, int MAX_VALUE, Vector<Int>* distances1, Node w, std::list<Node>* queue_new);
+        int mapSize;
+        std::list<Node> vertexCover;
+        Vector<bool> uncovered;
+        Vector<Int> degree;
+
+        void updateDistances(int d, int MAX_VALUE, Vector<Int> *distances1, Node w, std::list<Node> *queue_new);
+
+        void reset();
     };
 
 }
