@@ -35,9 +35,9 @@ int main(int argc, char **argv) {
     auto instance = std::make_shared<Instance>(scenario_path, nb_agents);
 
     // Create pricing solver.
-    SharedPtr<AbstractPathfinder> bellmanFord = std::make_shared<BellmanFord>(instance->map);
+    SharedPtr<AbstractPathfinder> bellmanFord = std::make_shared<BellmanFord>((*instance));
 
 
-    bellmanFord->solve(1, 2);
+    bellmanFord->solve(1, 2, 0, 30, 0);
     return 0;
 }

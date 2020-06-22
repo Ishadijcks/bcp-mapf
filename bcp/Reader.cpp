@@ -64,7 +64,7 @@ SCIP_RETCODE read_instance(
             pathfinder = std::make_shared<AStar>(instance->map);
             break;
         case PathfinderAlgorithm::BellmanFord:
-            pathfinder = std::make_shared<BellmanFord>(instance->map);
+            pathfinder = std::make_shared<BellmanFord>(*instance);
             break;
     }
 

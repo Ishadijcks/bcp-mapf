@@ -6,6 +6,7 @@ Author: Isha Dijcks <i.e.dijcks@student.tudelft.nl>
 #define BCP_MAPF_BELLMANFORD_H
 
 #include "AbstractPathfinder.h"
+#include "Instance.h"
 #include <iostream>
 #include <list>
 #include <limits>
@@ -14,12 +15,13 @@ namespace TruffleHog {
     class BellmanFord : public AbstractPathfinder {
 
         // Instance
-        const Map &map_;
+        const Instance &instance_;
+
 
     public:
         BellmanFord() = delete;
 
-        BellmanFord(const Map &map);
+        BellmanFord(const Instance &instance);
 
         BellmanFord(const BellmanFord &) = delete;
 
@@ -55,9 +57,16 @@ namespace TruffleHog {
         Vector<bool> uncovered;
         Vector<Int> degree;
 
-        void updateDistances(int d, int MAX_VALUE, Vector<Int> *distances1, Node w, std::list<Node> *queue_new);
+
+        //void updateDistances(int d, int MAX_VALUE, Vector<Int> *distances1, Node w, std::list<Node> *queue_new);
 
         void reset();
+
+
+        void
+        updateDistances(int d, int MAX_VALUE, Vector <TruffleHog::Cost> *distances1,
+                        Vector <TruffleHog::NodeTime> *parents1,
+                        NodeTime w, NodeTime v, std::list<NodeTime> *queue_new, Cost cost);
     };
 
 }
