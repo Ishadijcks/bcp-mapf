@@ -7,6 +7,7 @@ Author: Isha Dijcks <i.e.dijcks@student.tudelft.nl>
 
 #include "AbstractPathfinder.h"
 #include "Instance.h"
+#include "Heuristic.h"
 #include <iostream>
 #include <list>
 #include <limits>
@@ -16,6 +17,12 @@ namespace TruffleHog {
 
         // Instance
         const Instance &instance_;
+
+        // Heuristic
+        Heuristic heuristic_;
+
+        // Labels
+        LabelPool label_pool_;
 
 
     public:
@@ -35,14 +42,14 @@ namespace TruffleHog {
 
         // Getters
         // TODO(@Isha) implement
-        Time max_path_length() override { return 3; }
+        Time max_path_length() override { return heuristic_.max_path_length(); }
 
         bool hasReservationTable() override { return false; };
 
         ReservationTable &reservation_table() override {};
 
         // Solve
-        void compute_h(const Node goal) override {}
+        void compute_h(const Node goal) override { heuristic_.compute_h(goal); }
 
         Pair<Vector<NodeTime>, Cost> solve(NodeTime start,
                                            Node goal,

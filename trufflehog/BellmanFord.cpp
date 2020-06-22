@@ -9,7 +9,10 @@ namespace TruffleHog {
 
 
 
-    BellmanFord::BellmanFord(const Instance &instance) : instance_(instance) {
+    BellmanFord::BellmanFord(const Instance &instance) :
+    instance_(instance),
+    heuristic_(instance.map, label_pool_)
+    {
         instance.map.printPassable();
         instance.map.printNodes();
 
