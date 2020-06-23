@@ -87,11 +87,14 @@ namespace TruffleHog {
         Vector<Vector<Cost>*> outLengths (mapSize);
         Vector<Vector<NodeTime>*> outParents (mapSize);
 
+        Cost segment_cost = -1;
+        Cost best_cost = 200;
+
         //per source-node
         for (NodeTime sourceTuple : vertexCover) {
 
             Node source = sourceTuple.n;
-            Vector<Cost> distances1 (mapSize, goal_latest);
+            Vector<Cost> distances1 (mapSize * goal_latest, std::numeric_limits<int>::max());
             Vector<NodeTime> parents1 (mapSize * goal_latest);
 
             int MAX_VALUE = max_cost;
@@ -122,7 +125,7 @@ namespace TruffleHog {
                     //TODO check
                     const auto edge_costs = edge_penalties_.get_edge_costs<1>(v);
 
-                    Cost d = distances1[v.n];
+                    Cost d = distances1[v.t * mapSize + v.n];
 
                     fmt::print("{} {} {} {}\n", edge_costs.north, edge_costs.east, edge_costs.south, edge_costs.west);
                     bool edge_block = false;
@@ -130,13 +133,11 @@ namespace TruffleHog {
                         edge_block = true;
                     }
 
-                    bool move_stored = false;
-
                     if (const auto next_n = map.get_north(v.n);
                             map[next_n] && !std::isnan(edge_costs.north)) {
                         NodeTime w = NodeTime{next_n, v.t + 1};
 
-                        move_stored = updateDistances(d, MAX_VALUE, &distances1, &parents1, w, v, &queue_new, edge_costs.north, move_stored, edge_block);
+                        updateDistances(d, MAX_VALUE, &distances1, &parents1, w, v, &queue_new, edge_costs.north, &segment_cost, goal, &best_cost);
                     }
 
                     //south
@@ -144,7 +145,7 @@ namespace TruffleHog {
                             map[next_n] && !std::isnan(edge_costs.south))  {
                         NodeTime w = NodeTime{next_n, v.t + 1};
 
-                        move_stored = updateDistances(d, MAX_VALUE, &distances1, &parents1, w, v, &queue_new, edge_costs.south, move_stored, edge_block);
+                        updateDistances(d, MAX_VALUE, &distances1, &parents1, w, v, &queue_new, edge_costs.south, &segment_cost, goal, &best_cost);
                     }
 
                     //east
@@ -153,7 +154,7 @@ namespace TruffleHog {
                         NodeTime w = NodeTime{next_n, v.t + 1};
 
 
-                        move_stored = updateDistances(d, MAX_VALUE, &distances1, &parents1, w, v, &queue_new, edge_costs.east, move_stored, edge_block);
+                        updateDistances(d, MAX_VALUE, &distances1, &parents1, w, v, &queue_new, edge_costs.east, &segment_cost, goal, &best_cost);
                     }
 
                     //west
@@ -161,7 +162,7 @@ namespace TruffleHog {
                             map[next_n] && !std::isnan(edge_costs.west)) {
                         NodeTime w = NodeTime{next_n, v.t + 1};
 
-                        move_stored = updateDistances(d, MAX_VALUE, &distances1, &parents1, w, v, &queue_new, edge_costs.west, move_stored, edge_block);
+                        updateDistances(d, MAX_VALUE, &distances1, &parents1, w, v, &queue_new, edge_costs.west, &segment_cost, goal, &best_cost);
                     }
 
                     //wait
@@ -169,7 +170,7 @@ namespace TruffleHog {
                             map[next_n] && !std::isnan(edge_costs.wait)) {
                         NodeTime w = NodeTime{next_n, v.t + 1};
 
-                        updateDistances(d, MAX_VALUE, &distances1, &parents1, w, v, &queue_new, edge_costs.wait, move_stored, edge_block);
+                        updateDistances(d, MAX_VALUE, &distances1, &parents1, w, v, &queue_new, edge_costs.wait, &segment_cost, goal, &best_cost);
                     }
 
                 }
@@ -189,7 +190,6 @@ namespace TruffleHog {
 
         std::list<NodeTime> queue;
         Vector<NodeTime> segment (0);
-        Cost segment_cost = 0;
 
 
         fmt::print("\nShortest distance from:\n");
@@ -203,12 +203,11 @@ namespace TruffleHog {
                 fmt::print("{}\n", (*outLengths[agent.goal])[agent.start]);
 
             } else {
-                fmt::print("{}\n", (*outLengths[agent.start])[agent.goal]);
-                segment_cost = (*outLengths[agent.start])[agent.goal];
+                fmt::print("{}\n", (*outLengths[agent.start])[segment_cost * mapSize + agent.goal]);
 
                 //Find path
                 Node n = agent.goal;
-                queue.emplace_back(agent.goal, segment_cost);
+                queue.emplace_back(NodeTime{agent.goal, static_cast<Int>(segment_cost)});
                 NodeTime node = (*outParents[agent.start])[segment_cost * mapSize + n];
                 queue.emplace_back(node);
                 n = node.n;
@@ -230,12 +229,16 @@ namespace TruffleHog {
         return Pair<Vector<NodeTime>, Cost>(segment, segment_cost);
     }
 
-    bool
+    void
     BellmanFord::updateDistances(int d, int MAX_VALUE, Vector<Cost> *distances1, Vector<NodeTime> *parents1,
-            NodeTime w, NodeTime v, std::list<NodeTime> *queue_new, Cost cost, bool move_stored, bool edge_block) {
+            NodeTime w, NodeTime v, std::list<NodeTime> *queue_new, Cost cost, Cost* segment_cost, Node goal, Cost* best_cost) {
         bool changed = false;
-        if (d < MAX_VALUE &&  ((*distances1)[w.n] > d + cost /* the rest are edge-cost exceptions*/ || (w.n == v.n && edge_block /* && !move_stored */ ))) {
-            (*distances1)[w.n] = d + cost;
+        if (d < MAX_VALUE &&  ((*distances1)[w.t * mapSize + w.n] > d + cost /* the rest are edge-cost exceptions || (w.n == v.n && edge_block && !move_stored */ )) {
+            (*distances1)[w.t * mapSize + w.n] = d + cost;
+            if (w.n == goal && ((*segment_cost) == -1 || (*segment_cost) > w.t) && d + cost < (*best_cost)) {
+                (*segment_cost) = w.t;
+                (*best_cost) = d + cost;
+            }
             (*parents1)[w.t * mapSize + w.n] = v;
             changed = true;
         }
@@ -245,9 +248,7 @@ namespace TruffleHog {
             if (!found) {
                 queue_new->push_front(w);
             }
-            return true;
         }
-        return false;
 
     }
 
