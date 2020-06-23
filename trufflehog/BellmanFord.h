@@ -73,7 +73,7 @@ namespace TruffleHog {
         void
         updateDistances(int d, int MAX_VALUE, Vector <TruffleHog::Cost> *distances1,
                         Vector <TruffleHog::NodeTime> *parents1,
-                        NodeTime w, NodeTime v, std::list<NodeTime> *queue_new, Cost cost, Cost* segment_cost, Node goal, Cost* best_cost);
+                        NodeTime w, NodeTime v, std::list<NodeTime> *queue_new, Cost cost, Cost* segment_cost, Node goal);
     };
 
 }
