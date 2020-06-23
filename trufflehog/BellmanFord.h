@@ -16,7 +16,7 @@ namespace TruffleHog {
     class BellmanFord : public AbstractPathfinder {
 
         // Instance
-        const Instance &instance_;
+        const Map& map_;
 
         // Heuristic
         Heuristic heuristic_;
@@ -28,7 +28,7 @@ namespace TruffleHog {
     public:
         BellmanFord() = delete;
 
-        BellmanFord(const Instance &instance);
+        BellmanFord(const Map& map);
 
         BellmanFord(const BellmanFord &) = delete;
 
