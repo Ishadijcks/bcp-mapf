@@ -78,11 +78,11 @@ namespace TruffleHog {
             }
         //}
 
-        std::cout << "Vertex Cover: ";
-        for (NodeTime item : vertexCover) {
-            fmt::print("{} ", item.n);
-        }
-        std::cout << '\n';
+        //std::cout << "Vertex Cover: ";
+        //for (NodeTime item : vertexCover) {
+            //fmt::print("{} ", item.n);
+        //}
+        //std::cout << '\n';
 
         Vector<Vector<Cost>*> outLengths (mapSize);
         Vector<Vector<NodeTime>*> outParents (mapSize);
@@ -127,9 +127,9 @@ namespace TruffleHog {
 
                     Cost d = distances1[v.t * mapSize + v.n];
 
-                    fmt::print("{} {} {} {}\n", edge_costs.north, edge_costs.east, edge_costs.south, edge_costs.west);
+                    //fmt::print("{} {} {} {}\n", edge_costs.north, edge_costs.east, edge_costs.south, edge_costs.west);
                     bool edge_block = false;
-                    if (edge_costs.north > 1 || edge_costs.east > 1 || edge_costs.south > 1 || edge_costs.west > 1){
+                    if (edge_costs.north ==2 || edge_costs.east == 2 || edge_costs.south ==2 || edge_costs.west ==2){
                         edge_block = true;
                     }
 
@@ -192,18 +192,18 @@ namespace TruffleHog {
         Vector<NodeTime> segment (0);
 
 
-        fmt::print("\nShortest distance from:\n");
+        //fmt::print("\nShortest distance from:\n");
             agent = instance_.agents[c];
 
-            fmt::print("{}({},{}) : ", agent.start, agent.start_y, agent.start_x);
-            fmt::print("to {}({},{}): ", agent.goal, agent.goal_y, agent.goal_x);
+            //fmt::print("{}({},{}) : ", agent.start, agent.start_y, agent.start_x);
+            //fmt::print("to {}({},{}): ", agent.goal, agent.goal_y, agent.goal_x);
 
             if (outLengths[agent.goal] != NULL) {
                 //not used
-                fmt::print("{}\n", (*outLengths[agent.goal])[agent.start]);
+                //fmt::print("{}\n", (*outLengths[agent.goal])[agent.start]);
 
             } else {
-                fmt::print("{}\n", (*outLengths[agent.start])[segment_cost * mapSize + agent.goal]);
+                //fmt::print("{}\n", (*outLengths[agent.start])[segment_cost * mapSize + agent.goal]);
 
                 //Find path
                 Node n = agent.goal;
@@ -236,7 +236,7 @@ namespace TruffleHog {
         if (d < MAX_VALUE &&  ((*distances1)[w.t * mapSize + w.n] > d + cost /* the rest are edge-cost exceptions || (w.n == v.n && edge_block && !move_stored */ )) {
             (*distances1)[w.t * mapSize + w.n] = d + cost;
             if (w.n == goal && ((*segment_cost) == -1 || (*segment_cost) > w.t) && d + cost < (*best_cost)) {
-                (*segment_cost) = w.t;
+                (*segment_cost) = d + cost;
                 (*best_cost) = d + cost;
             }
             (*parents1)[w.t * mapSize + w.n] = v;
