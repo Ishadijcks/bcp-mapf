@@ -81,7 +81,7 @@ SCIP_RETCODE start_solver(
             }
         } else {
             println("No pathfinder algorithm specified, using AStar");
-            pathfinderAlgorithm = PathfinderAlgorithm::AStar;
+            pathfinderAlgorithm = PathfinderAlgorithm::BellmanFord;
         }
 
         // Get time limit.

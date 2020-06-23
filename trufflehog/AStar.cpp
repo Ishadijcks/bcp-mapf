@@ -242,6 +242,7 @@ void AStar::generate_end(Label* const current, const Cost max_cost)
 #endif
 
         // Done.
+        int a = 1;
         return;
     }
 
@@ -368,6 +369,7 @@ void AStar::generate(Label* const current,
 #endif
 
         // Done.
+        int a = 1;
         return;
     }
 

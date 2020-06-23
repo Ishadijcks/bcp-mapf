@@ -70,10 +70,10 @@ namespace TruffleHog {
         void reset();
 
 
-        void
+        bool
         updateDistances(int d, int MAX_VALUE, Vector <TruffleHog::Cost> *distances1,
                         Vector <TruffleHog::NodeTime> *parents1,
-                        NodeTime w, NodeTime v, std::list<NodeTime> *queue_new, Cost cost);
+                        NodeTime w, NodeTime v, std::list<NodeTime> *queue_new, Cost cost, bool move_stored, bool edge_block);
     };
 
 }
