@@ -28,6 +28,7 @@ namespace TruffleHog {
         Vector<Int> degree (mapSize);
 
         Cost segment_cost = std::numeric_limits<int>::max();
+        int time = 0;
 
         Node source = start.n;
         Vector<Cost> distances1 (mapSize * goal_latest, std::numeric_limits<int>::max());
@@ -68,7 +69,7 @@ namespace TruffleHog {
                         map[next_n] && !std::isnan(edge_costs.north)) {
                     NodeTime w = NodeTime{next_n, v.t + 1};
 
-                    updateDistances(d, MAX_VALUE, &distances1, &parents1, w, v, &queue_new, edge_costs.north, &segment_cost, goal);
+                    updateDistances(d, MAX_VALUE, &distances1, &parents1, w, v, &queue_new, edge_costs.north, &segment_cost, goal, &time);
                 }
 
                 //south
@@ -76,7 +77,7 @@ namespace TruffleHog {
                         map[next_n] && !std::isnan(edge_costs.south))  {
                     NodeTime w = NodeTime{next_n, v.t + 1};
 
-                    updateDistances(d, MAX_VALUE, &distances1, &parents1, w, v, &queue_new, edge_costs.south, &segment_cost, goal);
+                    updateDistances(d, MAX_VALUE, &distances1, &parents1, w, v, &queue_new, edge_costs.south, &segment_cost, goal ,  &time);
                 }
 
                 //east
@@ -85,7 +86,7 @@ namespace TruffleHog {
                     NodeTime w = NodeTime{next_n, v.t + 1};
 
 
-                    updateDistances(d, MAX_VALUE, &distances1, &parents1, w, v, &queue_new, edge_costs.east, &segment_cost, goal);
+                    updateDistances(d, MAX_VALUE, &distances1, &parents1, w, v, &queue_new, edge_costs.east, &segment_cost, goal,  &time);
                 }
 
                 //west
@@ -93,7 +94,7 @@ namespace TruffleHog {
                         map[next_n] && !std::isnan(edge_costs.west)) {
                     NodeTime w = NodeTime{next_n, v.t + 1};
 
-                    updateDistances(d, MAX_VALUE, &distances1, &parents1, w, v, &queue_new, edge_costs.west, &segment_cost, goal);
+                    updateDistances(d, MAX_VALUE, &distances1, &parents1, w, v, &queue_new, edge_costs.west, &segment_cost, goal,  &time);
                 }
 
                 //wait
@@ -101,7 +102,7 @@ namespace TruffleHog {
                         map[next_n] && !std::isnan(edge_costs.wait)) {
                     NodeTime w = NodeTime{next_n, v.t + 1};
 
-                    updateDistances(d, MAX_VALUE, &distances1, &parents1, w, v, &queue_new, edge_costs.wait, &segment_cost, goal);
+                    updateDistances(d, MAX_VALUE, &distances1, &parents1, w, v, &queue_new, edge_costs.wait, &segment_cost, goal,  &time);
                 }
 
             }
@@ -114,8 +115,8 @@ namespace TruffleHog {
 
         //Find path
         Node n = goal;
-        queue.emplace_back(NodeTime{goal, static_cast<Int>(segment_cost)});
-        NodeTime node = parents1[segment_cost * mapSize + n];
+        queue.emplace_back(NodeTime{goal, static_cast<Int>(time)});
+        NodeTime node = parents1[time * mapSize + n];
         queue.emplace_back(node);
         n = node.n;
         while (parents1[node.t * mapSize + n] != NULL){
@@ -134,12 +135,13 @@ namespace TruffleHog {
 
     void
     BellmanFord::updateDistances(int d, int MAX_VALUE, Vector<Cost> *distances1, Vector<NodeTime> *parents1,
-            NodeTime w, NodeTime v, std::list<NodeTime> *queue_new, Cost cost, Cost* segment_cost, Node goal) {
+            NodeTime w, NodeTime v, std::list<NodeTime> *queue_new, Cost cost, Cost* segment_cost, Node goal, int*  time) {
         bool changed = false;
         if (d < MAX_VALUE &&  ((*distances1)[w.t * mapSize + w.n] > d + cost)) {
             (*distances1)[w.t * mapSize + w.n] = d + cost;
             if (w.n == goal && d + cost < (*segment_cost)) {
                 (*segment_cost) = d + cost;
+                (*time) = w.t;
             }
             (*parents1)[w.t * mapSize + w.n] = v;
             changed = true;

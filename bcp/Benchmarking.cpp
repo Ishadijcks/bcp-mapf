@@ -131,7 +131,7 @@ int main(int argc, char **argv) {
             Benchmark("movingai_2018/20x20map", "20x20map-60agents-49.scen", 5),
             Benchmark("movingai_2018/20x20map", "20x20map-60agents-49.scen", 5, 2),
             //Benchmark("movingai_2018/20x20map", "20x20map-60agents-49.scen", 10),
-            //Benchmark("movingai_2018/20x20map", "20x20map-60agents-49.scen", 15),
+            //Benchmark("movingai_2018/20x20map", "20x20map-60agents-49.scen", 20),
     };
 
     int benchmarkCount = (sizeof(benchmarks) / sizeof(*benchmarks));
