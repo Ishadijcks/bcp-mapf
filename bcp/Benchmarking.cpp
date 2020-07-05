@@ -4,6 +4,8 @@ Author: Isha Dijcks <i.e.dijcks@student.tudelft.nl>
 
 #include <utility>
 #include <fstream>
+#include <chrono>
+#include <ctime>
 
 #include "Solve.h"
 
@@ -128,11 +130,17 @@ int main(int argc, char **argv) {
     Benchmark benchmarks[] = {
             Benchmark("custom", "small-corridor-5x5-2-agents.scen"),
             Benchmark("custom", "small-corridor-5x7-3-agents.scen"),
-            Benchmark("movingai_2018/20x20map", "20x20map-60agents-49.scen", 5),
-            Benchmark("movingai_2018/20x20map", "20x20map-60agents-49.scen", 5, 2),
+            //Benchmark("movingai_2019", "random-32-32-10-even-1.scen", 60),
+            //Benchmark("movingai_2018/20x20map", "20x20map-60agents-49.scen", 5),
+            //Benchmark("movingai_2018/20x20map", "20x20map-60agents-49.scen", 5, 2),
             //Benchmark("movingai_2018/20x20map", "20x20map-60agents-49.scen", 10),
             //Benchmark("movingai_2018/20x20map", "20x20map-60agents-49.scen", 20),
     };
+
+
+
+    auto start = std::chrono::system_clock::now();
+    // Some computation here
 
     int benchmarkCount = (sizeof(benchmarks) / sizeof(*benchmarks));
     int results[benchmarkCount];
@@ -145,6 +153,14 @@ int main(int argc, char **argv) {
     for (int i = 0; i < benchmarkCount; ++i) {
         std::cout << benchmarks[i].getDescription() << ": " << results[i] << std::endl;
     }
+
+    auto end = std::chrono::system_clock::now();
+
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+    std::cout << "finished computation at " << std::ctime(&end_time)
+              << "elapsed time: " << elapsed_seconds.count() << "s\n";
 
 
     return 0;
