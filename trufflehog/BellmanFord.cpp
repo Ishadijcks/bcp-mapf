@@ -229,6 +229,7 @@ namespace TruffleHog {
             (*distances1)[w.t * mapSize + w.n] = d + cost;
             if (w.n == goal && d + cost < (*segment_cost)) {
                 (*segment_cost) = d + cost;
+                (*time) = w.t;
             }
             (*parents1)[w.t * mapSize + w.n] = v;
             changed = true;
