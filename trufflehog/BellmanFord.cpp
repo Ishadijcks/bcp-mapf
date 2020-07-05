@@ -30,27 +30,19 @@ namespace TruffleHog {
         Vector<bool> uncovered (mapSize);
         Vector<Int> degree (mapSize);
 
-        //select signle agent (extra step for SSSP Bellman-Ford)
-        int c;
-        auto agents = instance_.agents;
-        for (c=0; c<agents.size(); c++){
-            if (agents[c].start == start.n && agents[c].goal == goal){
-                break;
-            }
-        }
 
-        //for (int i=0; i<instance_.agents.size(); i++){
+        for (int i=0; i<instance_.agents.size(); i++){
 
-            auto agent = instance_.agents[c];
+            auto agent = instance_.agents[i];
 
             uncovered[agent.start] = true;
             uncovered[agent.goal] = true;
 
             degree[agent.start] = degree[agent.start] + 1;
             degree[agent.goal] = degree[agent.goal] + 1;
-        //}
-        //for (int i=0; i<instance_.agents.size(); i++){
-            agent = instance_.agents[c];
+        }
+        for (int i=0; i<instance_.agents.size(); i++){
+            auto agent = instance_.agents[i];
             if ( uncovered[agent.start] && uncovered[agent.goal] ) {
                 if ( degree[agent.start] == 1 ) {
 
@@ -65,9 +57,9 @@ namespace TruffleHog {
 
                 }
             }
-        //}
-        //for (int i=0; i<instance_.agents.size(); i++){
-            agent = instance_.agents[c];
+        }
+        for (int i=0; i<instance_.agents.size(); i++){
+            auto agent = instance_.agents[i];
             if ( uncovered[agent.start] && uncovered[agent.goal] ) {
 
                 //never used
@@ -76,21 +68,23 @@ namespace TruffleHog {
                 uncovered[agent.start] = false;
                 uncovered[agent.goal] = false;
             }
-        //}
+        }
 
-        //std::cout << "Vertex Cover: ";
-        //for (NodeTime item : vertexCover) {
-            //fmt::print("{} ", item.n);
-        //}
-        //std::cout << '\n';
+        std::cout << "Vertex Cover: ";
+        for (NodeTime item : vertexCover) {
+            fmt::print("{} ", item.n);
+        }
+        std::cout << '\n';
 
         Vector<Vector<Cost>*> outLengths (mapSize);
         Vector<Vector<NodeTime>*> outParents (mapSize);
+        Vector<Cost> AllSegmentCosts (mapSize);
 
-        Cost segment_cost = std::numeric_limits<int>::max();
 
         //per source-node
         for (NodeTime sourceTuple : vertexCover) {
+
+            Cost segment_cost = std::numeric_limits<int>::max();
 
             Node source = sourceTuple.n;
             Vector<Cost> distances1 (mapSize * goal_latest, std::numeric_limits<int>::max());
@@ -178,30 +172,33 @@ namespace TruffleHog {
                 outLengths[source]->push_back(distances1[i]);
                 outParents[source]->push_back(parents1[i]);
             }
+            AllSegmentCosts[source] = segment_cost;
 
         }
 
-        std::list<NodeTime> queue;
-        Vector<NodeTime> segment (0);
 
+        for (int i=0; i<instance_.agents.size(); i++){
 
-        //fmt::print("\nShortest distance from:\n");
-            agent = instance_.agents[c];
+            std::list<NodeTime> queue;
+            Vector<NodeTime> segment (0);
 
-            //fmt::print("{}({},{}) : ", agent.start, agent.start_y, agent.start_x);
-            //fmt::print("to {}({},{}): ", agent.goal, agent.goal_y, agent.goal_x);
+            fmt::print("\nShortest distance from:\n");
+            auto agent = instance_.agents[i];
+
+            fmt::print("{}({},{}) : ", agent.start, agent.start_y, agent.start_x);
+            fmt::print("to {}({},{}): ", agent.goal, agent.goal_y, agent.goal_x);
 
             if (outLengths[agent.goal] != NULL) {
                 //not used
-                //fmt::print("{}\n", (*outLengths[agent.goal])[agent.start]);
+                fmt::print("{}\n", (*outLengths[agent.goal])[agent.start]);
 
             } else {
-                //fmt::print("{}\n", (*outLengths[agent.start])[segment_cost * mapSize + agent.goal]);
+                fmt::print("{}\n", (*outLengths[agent.start])[AllSegmentCosts[agent.start] * mapSize + agent.goal]);
 
                 //Find path
                 Node n = agent.goal;
-                queue.emplace_back(NodeTime{agent.goal, static_cast<Int>(segment_cost)});
-                NodeTime node = (*outParents[agent.start])[segment_cost * mapSize + n];
+                queue.emplace_back(NodeTime{agent.goal, static_cast<Int>(AllSegmentCosts[agent.start])});
+                NodeTime node = (*outParents[agent.start])[AllSegmentCosts[agent.start] * mapSize + n];
                 queue.emplace_back(node);
                 n = node.n;
                 while ((*outParents[agent.start])[node.t * mapSize + n] != NULL){
@@ -217,9 +214,11 @@ namespace TruffleHog {
             }
 
 
-        //}
+        }
 
-        return Pair<Vector<NodeTime>, Cost>(segment, segment_cost);
+        //return Pair<Vector<NodeTime>, Cost>(segment, segment_cost);
+        //find way to return all Paths and the cost for all those paths
+        return Pair<Vector<NodeTime>, Cost>(NULL, 0);
     }
 
     void
